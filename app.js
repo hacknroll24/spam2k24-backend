@@ -1,20 +1,19 @@
 // server.js
 const express = require("express");
 const cors = require("cors");
+require("dotenv").config();
 
 const app = express();
-const port = 3001;
+const port = process.env.API_PORT;
 
 app.use(cors());
 
-// Define a route
 app.get("/", (req, res) => {
   res.send("Hello, Express!");
 });
 
-app.get("/api/data", (req, res) => {
-  res.json({ message: "Hello from Express!" });
-});
+const apiRoutes = require("./routes/index");
+app.use("/api", apiRoutes);
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
