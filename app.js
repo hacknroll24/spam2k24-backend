@@ -87,9 +87,11 @@ io.on("connection", (socket) => {
     }, 1000);
   });
 
-  socket.on("kickPlayers", (roomCode) => {
-    Object.keys(getUsersInRoom(roomCode)).forEach((user) => {
-      delete socketToUsername[user];
+  socket.on("kickPlayer", (roomCode, user) => {
+    Object.keys(getUsersInRoom(roomCode)).forEach((playerId) => {
+      if (socketToUsername[playerId] === user) {
+        delete socketToUsername[playerId];
+      }
     });
   });
 });
