@@ -89,7 +89,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("startGameClock", (roomCode) => {
-    const duration = 30;
+    const duration = 7;
     console.log(`Starting a game clock timer of ${duration}s`);
 
     let timer = duration;
