@@ -19,9 +19,13 @@ app.get("/", (req, res) => {
 // app.use("/api", apiRoutes);
 
 const server = http.createServer(app);
+
+const domain =
+  process.env.ENV === "PROD" ? process.env.DOMAIN : "http://localhost";
+
 const io = new Server(server, {
   cors: {
-    origin: `http://localhost:${FRONTEND_PORT}`,
+    origin: `${domain}:${FRONTEND_PORT}`,
   },
 });
 
