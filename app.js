@@ -31,10 +31,16 @@ function getUsersInRoom(roomCode) {
   const socketIdsInRoom = Array.from(
     io.sockets.adapter.rooms.get(roomCode) || []
   );
-  const usersInRoom = socketIdsInRoom.map((socketId) => ({
-    [socketId]: socketToUsername[socketId],
-  }));
-  return socketToUsername;
+  let usersInRoom = {};
+  socketIdsInRoom.forEach((socketId) => {
+    usersInRoom = {
+      ...usersInRoom,
+      [socketId]: socketToUsername[socketId],
+    };
+    console.log(usersInRoom);
+  });
+
+  return usersInRoom;
 }
 
 io.on("connection", (socket) => {
@@ -60,10 +66,6 @@ io.on("connection", (socket) => {
     socket.to(roomCode).emit("updateClick", user, newIq);
   });
 
-  socket.on("accountUser", (user) => {
-    socket.emit("accountUser", user);
-  });
-
   socket.on("startGame", (roomCode) => {
     console.log("starting game");
     socket.to(roomCode).emit("startGame");
@@ -78,19 +80,17 @@ io.on("connection", (socket) => {
 
       if (timer === 0) {
         clearInterval(countdownInterval);
-        io.emit("countdownFinished", "Countdown Finished!");
+        io.to(roomCode).emit("countdownFinished");
       } else {
         timer--;
       }
     }, 1000);
   });
 
-  // Handle disconnect
-  socket.on("disconnect", (roomCode, user) => {
-    console.log("A user disconnected");
-    delete socketToUsername[socket.id];
-    socket.to(roomCode).emit("accountUser", user);
-    socket.disconnect();
+  socket.on("kickPlayers", (roomCode) => {
+    Object.keys(getUsersInRoom(roomCode)).forEach((user) => {
+      delete socketToUsername[user];
+    });
   });
 });
 
