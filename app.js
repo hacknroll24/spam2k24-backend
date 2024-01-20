@@ -67,19 +67,25 @@ io.on("connection", (socket) => {
     io.to(roomCode).emit("userList", getUsersInRoom(roomCode));
   });
 
-  socket.on("click", (newIq, user) => {
-    socket.to(roomCode).emit("updateClick", { user, newIq });
-    socket.to(roomCode).emit("message", { user, newIq });
+  socket.on("click", (newIq, user, roomCode) => {
+    socket.to(roomCode).emit("updateClick", user, newIq);
   });
 
   socket.on("accountUser", (user) => {
     socket.emit("accountUser", user);
   });
 
+  socket.on("startGame", (roomCode) => {
+    console.log("starting game");
+    socket.to(roomCode).emit("startGame");
+  });
+
   // Handle disconnect
-  socket.on("disconnect", () => {
+  socket.on("disconnect", (roomCode, user) => {
     console.log("A user disconnected");
     delete socketToUsername[socket.id];
+    socket.to(roomCode).emit("accountUser", user);
+    socket.disconnect();
   });
 });
 
