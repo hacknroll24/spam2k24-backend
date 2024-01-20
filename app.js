@@ -40,17 +40,6 @@ function getUsersInRoom(roomCode) {
 io.on("connection", (socket) => {
   console.log("A user connected");
 
-  // socket.join(roomCode);
-  // socket.emit("currentPlayers", io.in(roomCode).clients);
-
-  // Handle events from the client
-  socket.on("sendMessage", (message) => {
-    console.log("Received message from client:", message);
-
-    // Broadcast the message to all connected clients
-    io.emit("message", { text: message });
-  });
-
   socket.on("joinRoom", ({ roomCode, user }) => {
     socket.join(roomCode);
 
@@ -78,6 +67,22 @@ io.on("connection", (socket) => {
   socket.on("startGame", (roomCode) => {
     console.log("starting game");
     socket.to(roomCode).emit("startGame");
+  });
+
+  socket.on("startTimer", (roomCode, duration) => {
+    console.log(`Starting a timer of ${duration}s`);
+
+    let timer = duration;
+    const countdownInterval = setInterval(() => {
+      io.to(roomCode).emit("setTimer", timer);
+
+      if (timer === 0) {
+        clearInterval(countdownInterval);
+        io.emit("countdownFinished", "Countdown Finished!");
+      } else {
+        timer--;
+      }
+    }, 1000);
   });
 
   // Handle disconnect
