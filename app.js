@@ -71,16 +71,34 @@ io.on("connection", (socket) => {
     socket.to(roomCode).emit("startGame");
   });
 
-  socket.on("startTimer", (roomCode, duration) => {
-    console.log(`Starting a timer of ${duration}s`);
+  socket.on("startCountdown", (roomCode) => {
+    const duration = 5;
+    console.log(`Starting a countdown timer of ${duration}s`);
 
     let timer = duration;
     const countdownInterval = setInterval(() => {
-      io.to(roomCode).emit("setTimer", timer);
+      io.to(roomCode).emit("setCountdown", timer);
 
       if (timer === 0) {
         clearInterval(countdownInterval);
-        io.to(roomCode).emit("countdownFinished");
+        // io.to(roomCode).emit("countdownFinished");
+      } else {
+        timer--;
+      }
+    }, 1000);
+  });
+
+  socket.on("startGameClock", (roomCode) => {
+    const duration = 30;
+    console.log(`Starting a game clock timer of ${duration}s`);
+
+    let timer = duration;
+    const countdownInterval = setInterval(() => {
+      io.to(roomCode).emit("setGameClock", timer);
+
+      if (timer === 0) {
+        clearInterval(countdownInterval);
+        // io.to(roomCode).emit("countdownFinished");
       } else {
         timer--;
       }
