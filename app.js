@@ -20,9 +20,14 @@ app.get("/", (req, res) => {
 
 const server = http.createServer(app);
 
+const domain =
+  process.env.ENV === "PROD"
+    ? process.env.DOMAIN
+    : `http://localhost:${FRONTEND_PORT}`;
+
 const io = new Server(server, {
   cors: {
-    origin: "https://spam2k24-main-nine.vercel.app",
+    origin: `${domain}`,
   },
 });
 
@@ -90,7 +95,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("startGameClock", (roomCode) => {
-    const duration = 7;
+    const duration = 30;
     console.log(`Starting a game clock timer of ${duration}s`);
 
     let timer = duration;
