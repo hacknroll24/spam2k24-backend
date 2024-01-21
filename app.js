@@ -25,7 +25,7 @@ const domain =
 
 const io = new Server(server, {
   cors: {
-    origin: `${domain}:5173`,
+    origin: `${domain}`,
     // https://spam2k24-main.vercel.app:
   },
 });
