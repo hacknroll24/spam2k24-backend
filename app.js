@@ -22,7 +22,7 @@ const server = http.createServer(app);
 
 const domain =
   process.env.ENV === "PROD" ? process.env.DOMAIN : "http://localhost";
-
+// const domain = `http://localhost:5173`;
 const io = new Server(server, {
   cors: {
     origin: `${domain}`,
@@ -94,7 +94,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("startGameClock", (roomCode) => {
-    const duration = 7;
+    const duration = 30;
     console.log(`Starting a game clock timer of ${duration}s`);
 
     let timer = duration;
